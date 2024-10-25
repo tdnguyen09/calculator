@@ -1,8 +1,13 @@
 const display = document.getElementById('display')
+let operatorClicked = '';
+let previousNumber = '';
+let currentNumber = '';
 
 function addToDisplay(input){
     if ((display.value).length < 11){
-    display.value += input
+    currentNumber += input
+    display.value = currentNumber
+    console.log(currentNumber)
     }
 }
 
@@ -14,23 +19,50 @@ numbers.forEach(number => {
     })
 })
 
+
 const operators = document.querySelectorAll('.operator')
 operators.forEach(operator => {
     operator.addEventListener('click', () => {
-        let operatorInput = operator.innerHTML
-        addToDisplay(operatorInput)
+        operators.forEach(eachOperator => eachOperator.classList.remove('active'))
+        operator.classList.add('active')
+        operatorClicked = operator.innerHTML
+        previousNumber = display.value
+        currentNumber = '';
+        console.log(operatorClicked)
     })
 })
 
 const clearBtn = document.getElementById('clear-btn');
 clearBtn.addEventListener('click', () => {
+    operators.forEach(operator => operator.classList.remove('active'))
+    currentNumber = "";
     display.value = "";
+    operatorClicked ="";
 })
 
 const equal = document.getElementById('equal')
 equal.addEventListener('click', () => {
+    operators.forEach(operator => operator.classList.remove('active'))
     try{
-        display.value = eval(display.value)
+        let result;
+        switch(operatorClicked){
+            case '+':
+                result = eval(currentNumber) + eval(previousNumber)
+                break;
+            case '-':
+                result = eval(previousNumber) - eval(currentNumber)
+                break;
+            case '×':
+                result = eval(previousNumber) * eval(currentNumber)
+                break;
+            case '÷':
+                result = eval(previousNumber) / eval(currentNumber)
+                break;
+            default:
+                display.value = currentNumber;
+                return;
+        }
+        display.value = parseFloat(result.toPrecision(9))
     }
     catch(error) {
         display.value = 'Error'
